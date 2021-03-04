@@ -2594,6 +2594,14 @@ void PrintConfigDef::init_fff_params()
     def->mode = comAdvanced;
     def->set_default_value(new ConfigOptionFloat(0.));
 
+    def = this->add("wipe_tower_brim_width", coFloat);
+    def->label = L("Wipe tower brim width");
+    def->tooltip = L("Wipe tower brim width");
+    def->sidetext = L("mm");
+    def->mode = comAdvanced;
+    def->min = 0.f;
+    def->set_default_value(new ConfigOptionFloat(0.));
+
     def = this->add("wipe_into_infill", coBool);
     def->category = L("Wipe options");
     def->label = L("Wipe into this object's infill");

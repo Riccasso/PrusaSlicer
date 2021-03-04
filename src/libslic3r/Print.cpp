@@ -169,7 +169,8 @@ bool Print::invalidate_state_by_config_options(const ConfigOptionResolver & /* n
             || opt_key == "ooze_prevention"
             || opt_key == "wipe_tower_x"
             || opt_key == "wipe_tower_y"
-            || opt_key == "wipe_tower_rotation_angle") {
+            || opt_key == "wipe_tower_rotation_angle"
+            || opt_key == "wipe_tower_brim_width") {
             steps.emplace_back(psSkirt);
         } else if (
                opt_key == "nozzle_diameter"
