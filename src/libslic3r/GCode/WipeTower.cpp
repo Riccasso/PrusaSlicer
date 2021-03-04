@@ -817,20 +817,20 @@ WipeTower::ToolChangeResult WipeTower::toolchange_Brim(bool sideOnly, float y_of
 		  .append(";-------------------------------------\n"
 				  "; CP WIPE TOWER FIRST LAYER BRIM START\n");
 
-	Vec2f initial_position = wipeTower_box.lu - Vec2f(m_perimeter_width * 6.f, 0);
+    Vec2f initial_position = wipeTower_box.lu - Vec2f(m_wipe_tower_brim_width + 2*m_perimeter_width, 0);
 	writer.set_initial_position(initial_position, m_wipe_tower_width, m_wipe_tower_depth, m_internal_rotation);
 
-    writer.extrude_explicit(wipeTower_box.ld - Vec2f(m_perimeter_width * 6.f, 0), // Prime the extruder left of the wipe tower.
+    // Prime the extruder left of the wipe tower.
+    writer.extrude_explicit(wipeTower_box.ld - Vec2f(m_wipe_tower_brim_width + 2*m_perimeter_width, 0),
         1.5f * m_extrusion_flow * (wipeTower_box.lu.y() - wipeTower_box.ld.y()), 2400);
 
     // The tool is supposed to be active and primed at the time when the wipe tower brim is extruded.
-    // Extrude 4 rounds of a brim around the future wipe tower.
-    box_coordinates box(wipeTower_box);
-    // the brim shall have 'normal' spacing with no extra void space
+    // Extrude brim around the future wipe tower ('normal' spacing with no extra void space).
+    box_coordinates box(wipeTower_box);    
     float spacing = m_perimeter_width - m_layer_height*float(1.-M_PI_4);
 
     // How many perimeters shall the brim have?
-    size_t loops_num = (m_wipe_tower_brim_width - spacing/2.f) / spacing;
+    size_t loops_num = (m_wipe_tower_brim_width + spacing/2.f) / spacing;
 
     for (size_t i = 0; i < loops_num; ++ i) {
         box.expand(spacing);
@@ -839,6 +839,10 @@ WipeTower::ToolChangeResult WipeTower::toolchange_Brim(bool sideOnly, float y_of
               .extrude(box.rd      ).extrude(box.ld);
     }
 
+    // Save actual brim width to be later passed to the Print object, which will use it
+    // for skirt calculation and pass it to GLCanvas for precise preview box
+    m_wipe_tower_brim_width_real = wipeTower_box.ld.x() - box.ld.x() + spacing/2.f;
+
     box.expand(-spacing);
     writer.add_wipe_point(writer.x(), writer.y())
           .add_wipe_point(box.ld)
@@ -846,10 +850,6 @@ WipeTower::ToolChangeResult WipeTower::toolchange_Brim(bool sideOnly, float y_of
 
     writer.append("; CP WIPE TOWER FIRST LAYER BRIM END\n"
                   ";-----------------------------------\n");
-
-    // Save actual brim width to be later passed to the Print object, which will use it
-    // for skirt calculation and pass it to GLCanvas for precise preview box
-    // m_wipe_tower_brim_width = wipeTower_box.ld.x() - box.ld.x() + spacing/2.f;
 
     m_print_brim = false;  // Mark the brim as extruded
 

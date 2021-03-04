@@ -2681,7 +2681,6 @@ void GCodeViewer::load_shells(const Print& print, bool initialized)
         const PrintConfig& config = print.config();
         size_t extruders_count = config.nozzle_diameter.size();
         if ((extruders_count > 1) && config.wipe_tower && !config.complete_objects) {
-            const DynamicPrintConfig& print_config = wxGetApp().preset_bundle->prints.get_edited_preset().config;
             float depth = print.wipe_tower_data(extruders_count).depth;
             float brim_width = print.wipe_tower_data(extruders_count).brim_width;
 
